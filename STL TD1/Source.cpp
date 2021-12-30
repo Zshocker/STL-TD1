@@ -4,6 +4,8 @@
 #include<algorithm>
 #include<stack>
 #include<queue>
+#include<unordered_map>
+#include"Perssonne.h"
 using namespace std;
 void Prgr1() {
 	string buff;
@@ -88,7 +90,7 @@ void Prgr2()
 }
 
 void Prgrm3() {
-	priority_queue<string, vector<string>, greater<string>> Inst;
+	priority_queue<string, vector<string>, less<string>> Inst;
 	string buff;
 	cout << "Donner les Mots (Stop. pour finir)"<< endl;
 	do
@@ -114,7 +116,10 @@ void Print_List(list<string>& Lst)
 }
 string TransString(string& S) {
 	string Sst=S;
-	transform(S.begin(), S.end(), Sst.begin(), [](const char& c) {if (c == 'e' || c == 'a' || c == 'o' || c == 'i' || c == 'u' || c == 'y')return '*'; return c; });
+	transform(S.begin(), S.end(), Sst.begin(), [](const char& c) 
+		{
+			if (c == 'e' || c == 'a' || c == 'o' || c == 'i' || c == 'u' || c == 'y')return '*'; return c; 
+		});
 	return Sst;
 }
 void Ex2_Prgrm() 
@@ -125,15 +130,40 @@ void Ex2_Prgrm()
 	Print_List(Lst);
 	transform(Lst.begin(), Lst.end(),L3.begin(), TransString);
 	Print_List(L3);
-	transform(Lst.begin(), Lst.end(), L2.begin(), [](string S) {string D = S; transform(S.begin(), S.end(), D.begin(), [](char C) {return toupper(C); }); return D; });
+	transform(Lst.begin(), Lst.end(), L2.begin(), [](string S) {string D = S; transform(S.begin(), S.end(), D.begin(), toupper); return D; });
 	Print_List(L2);
 }
 
 
 
+/*-----------------------EX3-------------------------*/
+template<class T,class e>
+priority_queue<T, vector<T>, greater<T>>& GET_Ordered_Keys(unordered_multimap<T, e>& E)
+{
+	priority_queue<T,vector<T>,greater<T>>* EE = new priority_queue<T,vector<T>,greater<T>>();
+	for (auto i : E)
+	{
+		EE->push(i.first);
+	}
+	return *EE;
+}
+
 
 int main() {
 	
-	Ex2_Prgrm();
+	unordered_multimap<string, Personne*> SE;
+	Personne* eP = new Personne("Hicham Sentel", "Charaf", "0607459927");
+	SE.insert(make_pair("Hicham",eP));
+	SE.insert(make_pair("Sentel",eP));
+	SE.insert(make_pair("Hamza",new Personne("Hamza", "Saada", "0752452427")));
+	SE.insert(make_pair("Zak",new Personne("Zak", "Casa", "0645123498")));
+	priority_queue<string, vector<string>, greater<string>>& ST = GET_Ordered_Keys<string,Personne*>(SE);
+	while(!ST.empty())
+	{
+		auto it = SE.find(ST.top());
+		cout << "Nom :" << it->first;
+		it->second->Afficher_add_num();
+		ST.pop();
+	}
 	return 0;	 
 }
